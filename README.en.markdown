@@ -35,12 +35,12 @@ Follow these steps to set up and run the project locally.
 
    Using HTTPS:
    ```bash
-   git clone https://github.com/eugeneliukindev/fastapi-base-application.git
+   git clone https://github.com/eugeneliukindev/FastAPI-Starter-Kit.git
    ```
 
    Using SSH (recommended):
    ```bash
-   git clone git@github.com:eugeneliukindev/fastapi-base-application.git
+   git clone git@github.com:eugeneliukindev/FastAPI-Starter-Kit.git
    ```
 
 2. **Install Dependencies**

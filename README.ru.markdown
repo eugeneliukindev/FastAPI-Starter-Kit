@@ -35,12 +35,12 @@
 
    Через HTTPS:
    ```bash
-   git clone https://github.com/eugeneliukindev/fastapi-base-application.git
+   git clone https://github.com/eugeneliukindev/FastAPI-Starter-Kit.git
    ```
 
    Через SSH (рекомендуется):
    ```bash
-   git clone git@github.com/eugeneliukindev/fastapi-base-application.git
+   git clone git@github.com:eugeneliukindev/FastAPI-Starter-Kit.git
    ```
 
 2. **Установка зависимостей**
