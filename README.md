@@ -13,11 +13,11 @@ This template is designed to streamline your FastAPI development by eliminating:
 
 ### Features
 
-- ✅ **Type safety** with [Mypy](https://mypy.readthedocs.io/en/stable/) support
-- 🧹 **Code quality** ensured by [Ruff](https://docs.astral.sh/ruff/) linter and formatter
-- 📦 **Dependency management** via [Poetry](https://python-poetry.org/)
-- 🐳 **Dockerized Postgres** for quick database setup
-- 🔄 **Alembic migrations** for seamless database schema management
+- ✅ **Type safety** with **[Mypy](https://mypy.readthedocs.io/en/stable/)** support
+- 🧹 **Code quality** ensured by **[Ruff](https://docs.astral.sh/ruff/)** linter and formatter
+- 📦 **Dependency management** via **[Poetry](https://python-poetry.org/)**
+- 🐳 **Dockerized [Postgres](https://hub.docker.com/_/postgres)** for quick database setup
+- 🔄 **[Alembic](https://alembic.sqlalchemy.org/en/latest/index.html) migrations** for seamless database schema management
 
 ## Getting Started
 
@@ -54,12 +54,12 @@ Follow these steps to set up and run the project locally.
 
    Install dependencies:
 
-   With dev dependencies (for development):
+   With `dev` dependencies (for development):
    ```bash
    poetry install
    ```
 
-   Without dev dependencies (for production):
+   Without `dev` dependencies (for production):
    ```bash
    poetry install --without dev
    ```
@@ -96,6 +96,22 @@ Follow these steps to set up and run the project locally.
   - Run `mypy .` for type checking
   - Run `ruff check .` for linting
   - Run `ruff format .` for code formatting
+
+## Additional Notes
+  
+- **Important Note About .env**
+
+  The `.env` file is used to store sensitive data like database credentials. For demonstration purposes, it's not included in `.gitignore`. For security reasons, we strongly recommend adding `.env` to `.gitignore` to prevent accidentally committing sensitive data to the repository:
+   ```bash
+   echo ".env" >> .gitignore
+   ```
+  
+- **Initializing pre-commit Hooks**
+  
+   If you installed `dev` dependencies via poetry install, pre-commit was included in the installation. To activate it, run:
+   ```bash
+   pre-commit install
+   ```
 
 ## Contributing
 
