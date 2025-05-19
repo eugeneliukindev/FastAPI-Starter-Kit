@@ -51,7 +51,7 @@ async def get_user(
 
 
 @router.put("/{user_id}", response_model=UserS)
-async def replace_user(
+async def update_user_partial(
     session: SessionDep,
     user_id: int,
     user_put: UserPutS,
