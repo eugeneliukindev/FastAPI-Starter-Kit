@@ -64,7 +64,12 @@ Follow these steps to set up and run the project locally.
    poetry install --without dev
    ```
 
-3. **Set Up the Database**
+3. **Change directory to main application**
+   ```bash
+   cd fastapi-app
+   ```
+
+4. **Set Up the Database**
 
    Use the provided Docker Compose file to spin up a Postgres database:
    ```bash
@@ -73,18 +78,18 @@ Follow these steps to set up and run the project locally.
 
    *Note*: Ensure [Docker](https://www.docker.com/) is installed and running.
 
-4. **Run Alembic Migrations**
+5. **Run Alembic Migrations**
 
    Generate and apply database migrations using Alembic:
    ```bash
    alembic revision --autogenerate -m "create tables" && alembic upgrade head
    ```
 
-5. **Start the Application**
+6. **Start the Application**
 
    Navigate to the app directory and run the FastAPI server:
    ```bash
-   cd fastapi-app && python main.py
+   python main.py
    ```
 
    Your API is now running! Access it at `http://localhost:8000` (or the configured port).

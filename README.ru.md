@@ -64,8 +64,13 @@
    ```bash
    poetry install --without dev
    ```
+   
+3. **Переключитесь на рабочую папку с приложением**
+   ```bash
+   cd fastapi-app
+   ```
 
-3. **Настройка базы данных**
+4. **Настройка базы данных**
 
    Используйте предоставленный Docker Compose файл для запуска Postgres: 
    ```bash
@@ -74,18 +79,18 @@
 
    *Примечание*: Убедитесь, что [Docker](https://www.docker.com/) установлен и запущен.
 
-4. **Создание миграций Alembic**
+5. **Создание миграций Alembic**
 
    Сгенерируйте и примените миграции базы данных с помощью Alembic:
    ```bash
    alembic revision --autogenerate -m "create tables" && alembic upgrade head
    ```
 
-5. **Запуск приложения**
+6. **Запуск приложения**
 
    Перейдите в директорию приложения и запустите сервер FastAPI:
    ```bash
-   cd fastapi-app && python main.py
+   python main.py
    ```
 
    Ваше API теперь работает! Доступно по адресу `http://localhost:8000` (или настроенному порту).
