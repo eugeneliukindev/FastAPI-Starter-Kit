@@ -79,15 +79,15 @@ Follow these steps to set up and run the project locally.
    *Note*: Ensure [Docker](https://www.docker.com/) is installed and running.
 
 5. **Run Alembic Migrations**
-
-   Generate and apply database migrations using Alembic:
+ 
+   Apply an existing database migration using Alembic:
    ```bash
-   alembic revision --autogenerate -m "create tables" && alembic upgrade head
+   alembic upgrade head
    ```
 
 6. **Start the Application**
 
-   Navigate to the app directory and run the FastAPI server:
+   Run the FastAPI server:
    ```bash
    python main.py
    ```
