@@ -5,6 +5,6 @@ from .base import Base
 from .mixins import IntIdPkMixin
 
 
-class User(Base, IntIdPkMixin):
+class UserOrm(Base, IntIdPkMixin):
     username: Mapped[str] = mapped_column(String(30), unique=True)
     email: Mapped[str] = mapped_column(String(50), unique=True)
