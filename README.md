@@ -1,10 +1,10 @@
 # FastAPI Starter Kit 🚀
 
-A lightweight, ready-to-use template for building APIs with **FastAPI**. Get started in minutes without the hassle of complex setup!
+A lightweight, ready-to-use template for building APIs with **[FastAPI](https://fastapi.tiangolo.com/)**. Get started in minutes without the hassle of complex setup!
 
 ## Why Use This Starter Kit?
 
-This template is designed to streamline your FastAPI development by eliminating:
+This template is designed to streamline your **[FastAPI](https://fastapi.tiangolo.com/)** development by eliminating:
 
 - 🛠️ **Database configuration**
 - ⚙️ **Environment setup**
