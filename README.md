@@ -16,6 +16,7 @@ This template is designed to streamline your **[FastAPI](https://fastapi.tiangol
 - ✅ **Type safety** with **[Mypy](https://mypy.readthedocs.io/en/stable/)** support
 - 🧹 **Code quality** ensured by **[Ruff](https://docs.astral.sh/ruff/)** linter and formatter
 - 📦 **Dependency management** via **[Poetry](https://python-poetry.org/)**
+- 🗄️ **Asynchronous [SQLAlchemy](https://www.sqlalchemy.org/)** with **[AsyncPG](https://magicstack.github.io/asyncpg/current/)** driver for high-performance work with **[PostgreSQL](https://www.postgresql.org/)**
 - 🐳 **Dockerized [Postgres](https://hub.docker.com/_/postgres)** for quick database setup
 - 🔄 **[Alembic](https://alembic.sqlalchemy.org/en/latest/index.html) migrations** for seamless database schema management
 
