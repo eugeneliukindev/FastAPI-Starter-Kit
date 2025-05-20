@@ -79,4 +79,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-print(settings.db.url.render_as_string(hide_password=False))
