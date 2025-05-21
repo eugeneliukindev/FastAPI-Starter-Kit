@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel
 from pydantic_settings import (
@@ -39,6 +39,17 @@ class LoggingConfig(BaseModel):
 class JWTConfig(BaseModel):
     public_key: Path = ROOT_DIR / "secrets" / "jwt-public.pem"
     private_key: Path = ROOT_DIR / "secrets" / "jwt-private.pem"
+
+    options: dict[str, Any] = {
+        "verify_signature": True,
+        "verify_sub": True,
+        "verify_exp": True,
+        "verify_iat": True,
+        "verify_jti": True,
+        "verify_nbf": False,
+        "verify_iss": False,
+        "verify_aud": False,
+    }
 
 
 class DatabaseConfig(BaseModel):
