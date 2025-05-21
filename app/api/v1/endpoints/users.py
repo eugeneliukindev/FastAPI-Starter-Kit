@@ -10,7 +10,7 @@ from app.auth.password import get_password_hash
 from app.core.db_manager import SessionDep
 from app.core.schemas import UserCreateS, UserPutS, UserS
 from app.core.schemas.user import UserCreateDatabaseS, UserPatchS
-from app.exceptions.users import raise_user_already_exists_exp, raise_user_not_found_exp
+from app.exceptions.users import user_already_exists_exp, user_not_found_exp
 from app.repository import UserRepository
 
 if TYPE_CHECKING:
@@ -41,7 +41,7 @@ async def create_user(
         user_create_db=user_create_db,
     )
     if user is None:
-        raise_user_already_exists_exp()
+        raise user_already_exists_exp
 
     return user
 
@@ -53,7 +53,7 @@ async def get_user(
 ) -> Any:
     user = await UserRepository.get(session=session, user_id=user_id)
     if user is None:
-        raise_user_not_found_exp()
+        raise user_not_found_exp
     return user
 
 
@@ -67,7 +67,7 @@ async def update_user_partial(
         session=session, user_id=user_id, user_update=user_put
     )
     if updated_user is None:
-        raise_user_not_found_exp()
+        raise user_not_found_exp
     return updated_user
 
 
@@ -83,7 +83,7 @@ async def update_user(
         user_update=user_patch,
     )
     if updated_user is None:
-        raise_user_not_found_exp()
+        raise user_not_found_exp
     return updated_user
 
 
@@ -94,5 +94,5 @@ async def delete_user(
 ) -> Any:
     deleted_user = await UserRepository.delete(session=session, user_id=user_id)
     if deleted_user is None:
-        raise_user_not_found_exp()
+        raise user_not_found_exp
     return deleted_user
