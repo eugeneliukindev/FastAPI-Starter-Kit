@@ -10,11 +10,15 @@ alembic = "^1.15.2"
 sqlalchemy = {extras = ["asyncio", "mypy"], version = "^2.0.41"}
 asyncpg = "^0.30.0"
 pydantic = {extras = ["email"], version = "^2.11.4"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pyjwt = {extras = ["crypto"], version = "^2.10.1"}
+python-multipart = "^0.0.20"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
 ruff = "^0.11.10"
 pre-commit = "^4.2.0"
+types-passlib = "^1.7.7.20250516"
 
 [tool.mypy]
 strict = true
@@ -38,4 +42,4 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"fastapi-app/alembic/versions/*.py" = ["W291"] # ignore trailing-whitespace in alembic autogenerate migrations
+"migrations/versions/*.py" = ["W291"] # ignore trailing-whitespace in alembic autogenerate migrations
