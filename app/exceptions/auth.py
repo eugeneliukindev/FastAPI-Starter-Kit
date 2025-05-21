@@ -21,7 +21,7 @@ invalid_token_type_exc = HTTPException(
 )
 
 
-token_expired_exc = HTTPException(
+expired_token_exc = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Token has expired",
     headers={"WWW-Authenticate": "Bearer"},
