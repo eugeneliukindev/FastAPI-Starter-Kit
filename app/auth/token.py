@@ -76,7 +76,9 @@ def create_token(
             sub=sub,
             iat=now,
             exp=exp,
-            **user.model_dump(),
+            id=user.id,
+            username=user.username,
+            email=user.email,
         )
     else:
         payload = TokenPayloadS(

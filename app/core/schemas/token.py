@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from app.utils.constants import AUTHENTICATION_SCHEME_TYPE
 from app.utils.types import AuthenticationSchemeType, TokenType
@@ -11,10 +11,12 @@ class TokenResponseS(BaseModel):
 
 
 class TokenPayloadS(BaseModel):
+    # required keys
     type: TokenType
     sub: str
     iat: int
     exp: int
+    # for access token
     id: int | None = None
     username: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
