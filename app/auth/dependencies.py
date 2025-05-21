@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.password import verify_password
-from app.auth.token import decode_token, validate_token
+from app.auth.token import decode_and_validate_token
 from app.core.db_manager import SessionDep
 from app.core.schemas import UserS
 from app.exceptions.auth import (
@@ -35,8 +35,9 @@ async def get_auth_user(
     token: str,
     expected_token_type: TokenType,
 ) -> UserS:
-    payload = decode_token(token=token)
-    validate_token(payload=payload, expected_token_type=expected_token_type)
+    payload = decode_and_validate_token(
+        token=token, expected_token_type=expected_token_type
+    )
     user = await UserRepository.get_by_username(session=session, username=payload.sub)
     if user is None:
         raise invalid_token_type_exc

@@ -1,3 +1,4 @@
+import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -8,8 +9,8 @@ from app.config import settings
 from app.core.schemas import UserS
 from app.core.schemas.token import TokenPayloadS
 from app.exceptions.auth import (
+    expired_token_exc,
     invalid_token_type_exc,
-    token_expired_exc,
     unverified_credentials_exc,
 )
 from app.utils.constants import (
@@ -34,32 +35,36 @@ def encode_token(
     return token
 
 
-def decode_token(
+def decode_and_validate_token(
     token: str,
+    expected_token_type: TokenType,
     key: Any = settings.jwt.public_key.read_text(),
     algorithm: str = ALGORITHM,
 ) -> TokenPayloadS:
     try:
-        payload_dict = jwt.decode(jwt=token, key=key, algorithms=[algorithm])
+        payload_dict = jwt.decode(
+            jwt=token,
+            key=key,
+            algorithms=[algorithm],
+            options=settings.jwt.options,
+        )
         payload = TokenPayloadS(**payload_dict)
-    except (jwt.InvalidTokenError, ValidationError) as e:
+
+        if payload.type != expected_token_type:
+            raise invalid_token_type_exc
+
+    except jwt.ExpiredSignatureError as e:
+        raise expired_token_exc from e
+    except jwt.MissingRequiredClaimError as e:
         raise unverified_credentials_exc from e
+    except jwt.InvalidTokenError as e:
+        raise unverified_credentials_exc from e
+    except ValidationError as e:
+        raise unverified_credentials_exc from e
+    except Exception as e:
+        raise unverified_credentials_exc from e
+
     return payload
-
-
-def validate_token(
-    payload: TokenPayloadS,
-    expected_token_type: TokenType,
-) -> None:
-    if payload.type != expected_token_type:
-        raise invalid_token_type_exc
-
-    timestamp_now = int(datetime.now(UTC).timestamp())
-
-    if timestamp_now > payload.exp:
-        raise token_expired_exc
-    if timestamp_now < payload.iat:
-        raise token_expired_exc
 
 
 def create_token(
@@ -70,12 +75,14 @@ def create_token(
     now = int(datetime.now(UTC).timestamp())
     exp = now + int(expires_delta.total_seconds())
     sub = user.username
+    jti = uuid.uuid4().hex
     if type_ == ACCESS_TOKEN_TYPE:
         payload = TokenPayloadS(
             type=ACCESS_TOKEN_TYPE,
             sub=sub,
             iat=now,
             exp=exp,
+            jti=jti,
             id=user.id,
             username=user.username,
             email=user.email,
@@ -86,6 +93,7 @@ def create_token(
             sub=sub,
             iat=now,
             exp=exp,
+            jti=jti,
         )
     return encode_token(payload=payload)
 
