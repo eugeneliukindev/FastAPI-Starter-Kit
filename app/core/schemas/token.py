@@ -16,6 +16,7 @@ class TokenPayloadS(BaseModel):
     sub: str
     iat: int
     exp: int
+    jti: str
     # for access token
     id: int | None = None
     username: str | None = None
