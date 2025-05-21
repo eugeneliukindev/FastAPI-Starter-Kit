@@ -6,11 +6,12 @@ from fastapi import (
     APIRouter,
 )
 
+from app.auth.password import get_password_hash
+from app.core.db_manager import SessionDep
 from app.core.schemas import UserCreateS, UserPutS, UserS
-from app.core.schemas.user import UserPatchS
+from app.core.schemas.user import UserCreateDatabaseS, UserPatchS
 from app.exceptions.users import raise_user_already_exists_exp, raise_user_not_found_exp
-from app.repository import UserService
-from app.utils.types import SessionDep
+from app.repository import UserRepository
 
 if TYPE_CHECKING:
     from typing import Any
@@ -21,7 +22,7 @@ router = APIRouter(tags=["Users"], prefix="/users")
 async def get_all_users(
     session: SessionDep,
 ) -> Any:
-    users = await UserService.get_all(session=session)
+    users = await UserRepository.get_all(session=session)
     return users
 
 
@@ -30,9 +31,14 @@ async def create_user(
     session: SessionDep,
     user_create: UserCreateS,
 ) -> Any:
-    user = await UserService.create(
+    hashed_password = get_password_hash(password=user_create.password)
+    user_create_db = UserCreateDatabaseS(
+        **user_create.model_dump(exclude={"password"}),
+        hashed_password=hashed_password,
+    )
+    user = await UserRepository.create(
         session=session,
-        user_create=user_create,
+        user_create_db=user_create_db,
     )
     if user is None:
         raise_user_already_exists_exp()
@@ -45,7 +51,7 @@ async def get_user(
     user_id: int,
     session: SessionDep,
 ) -> Any:
-    user = await UserService.get(session=session, user_id=user_id)
+    user = await UserRepository.get(session=session, user_id=user_id)
     if user is None:
         raise_user_not_found_exp()
     return user
@@ -57,7 +63,7 @@ async def update_user_partial(
     user_id: int,
     user_put: UserPutS,
 ) -> Any:
-    updated_user = await UserService.update(
+    updated_user = await UserRepository.update(
         session=session, user_id=user_id, user_update=user_put
     )
     if updated_user is None:
@@ -71,7 +77,7 @@ async def update_user(
     user_id: int,
     user_patch: UserPatchS,
 ) -> Any:
-    updated_user = await UserService.update(
+    updated_user = await UserRepository.update(
         session=session,
         user_id=user_id,
         user_update=user_patch,
@@ -86,7 +92,7 @@ async def delete_user(
     session: SessionDep,
     user_id: int,
 ) -> Any:
-    deleted_user = await UserService.delete(session=session, user_id=user_id)
+    deleted_user = await UserRepository.delete(session=session, user_id=user_id)
     if deleted_user is None:
         raise_user_not_found_exp()
     return deleted_user
