@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 from sqlalchemy import delete, select, update
 
 from app.core.models import UserOrm
-from app.core.schemas import UserCreateS, UserPatchS, UserPutS
+from app.core.schemas import UserPatchS, UserPutS
+from app.core.schemas.user import UserCreateDatabaseS
 from app.repository.abstract import AbstractService
 
 if TYPE_CHECKING:
@@ -14,9 +15,9 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class UserService(
+class UserRepository(
     AbstractService[
-        UserCreateS,  # Create schema
+        UserCreateDatabaseS,  # Create schema
         UserPatchS | UserPutS,  # Update schema
         UserOrm,  # Model
     ]
@@ -24,13 +25,13 @@ class UserService(
     @staticmethod
     async def create(
         session: AsyncSession,
-        user_create: UserCreateS,
+        user_create_db: UserCreateDatabaseS,
     ) -> UserOrm | None:
-        query = select(UserOrm).where(UserOrm.email == user_create.email)
+        query = select(UserOrm).where(UserOrm.email == user_create_db.email)
         existing_user = (await session.scalars(query)).first()
         if existing_user:
             return None
-        user = UserOrm(**user_create.model_dump())
+        user = UserOrm(**user_create_db.model_dump())
         session.add(user)
         await session.commit()
         return user
@@ -41,6 +42,14 @@ class UserService(
         user_id: int,
     ) -> UserOrm | None:
         return await session.get(UserOrm, user_id)
+
+    @staticmethod
+    async def get_by_username(
+        session: AsyncSession,
+        username: str,
+    ) -> UserOrm | None:
+        query = select(UserOrm).where(UserOrm.username == username)
+        return (await session.scalars(query)).first()
 
     @staticmethod
     async def get_all(
