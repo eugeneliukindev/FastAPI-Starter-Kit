@@ -16,7 +16,11 @@ class UserS(UserBaseS):
 
 
 class UserCreateS(UserBaseS):
-    pass
+    password: str
+
+
+class UserCreateDatabaseS(UserBaseS):
+    hashed_password: str
 
 
 class UserPutS(UserBaseS):
