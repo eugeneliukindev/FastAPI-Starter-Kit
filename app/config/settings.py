@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel
@@ -7,6 +8,8 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 from sqlalchemy import URL
+
+from app.utils.constants import ROOT_DIR
 
 LOG_DEFAULT_FORMAT = (
     "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
@@ -31,6 +34,11 @@ class LoggingConfig(BaseModel):
     @property
     def log_level_value(self) -> int:
         return logging.getLevelNamesMapping()[self.log_level.upper()]
+
+
+class JWTConfig(BaseModel):
+    public_key: Path = ROOT_DIR / "secrets" / "jwt-public.pem"
+    private_key: Path = ROOT_DIR / "secrets" / "jwt-private.pem"
 
 
 class DatabaseConfig(BaseModel):
@@ -75,6 +83,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     logging: LoggingConfig = LoggingConfig()
+    jwt: JWTConfig = JWTConfig()
     db: DatabaseConfig
 
 
