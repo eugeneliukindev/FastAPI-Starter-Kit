@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated, Any
 
 from fastapi import (
     APIRouter,
+    Depends,
 )
 
+from app.auth.dependencies import get_user_from_access_token
 from app.auth.password import get_password_hash
 from app.core.db_manager import SessionDep
 from app.core.schemas import UserCreateS, UserPutS, UserS
@@ -43,6 +45,13 @@ async def create_user(
     if user is None:
         raise user_already_exists_exp
 
+    return user
+
+
+@router.get("/me", response_model=UserS)
+async def get_me(
+    user: Annotated[UserS, Depends(get_user_from_access_token)],
+) -> Any:
     return user
 
 

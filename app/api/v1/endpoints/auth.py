@@ -7,7 +7,6 @@ from fastapi.security import HTTPBearer, OAuth2PasswordRequestForm
 
 from app.auth.dependencies import (
     authenticate_user,
-    get_user_from_access_token,
     get_user_from_refresh_token,
 )
 from app.auth.token import (
@@ -57,10 +56,3 @@ async def refresh(
         "access_token": access_token,
         "authentication_scheme": AUTHENTICATION_SCHEME_TYPE,
     }
-
-
-@router.get("/me", response_model=UserS)
-async def get_me(
-    user: Annotated[UserS, Depends(get_user_from_access_token)],
-) -> Any:
-    return user
