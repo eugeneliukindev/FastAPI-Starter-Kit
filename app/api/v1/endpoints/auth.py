@@ -44,7 +44,7 @@ async def login(
     }
 
 
-@router.get(
+@router.post(
     "/refresh",
     response_model=TokenResponseS,
     response_model_exclude_none=True,
