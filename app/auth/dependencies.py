@@ -30,7 +30,11 @@ async def authenticate_user(
     return UserS.model_validate(user, from_attributes=True)
 
 
-async def get_auth_user(
+def get_token_from_header(token: Annotated[str, Depends(oauth2_scheme)]) -> str:
+    return token
+
+
+async def get_user_from_token(
     session: AsyncSession,
     token: str,
     expected_token_type: TokenType,
@@ -44,19 +48,18 @@ async def get_auth_user(
     return UserS.model_validate(user, from_attributes=True)
 
 
-async def get_auth_user_for_access_token(
-    session: SessionDep,
-    token: Annotated[str, Depends(oauth2_scheme)],
+async def get_user_from_access_token(
+    session: SessionDep, token: Annotated[str, Depends(get_token_from_header)]
 ) -> UserS:
-    return await get_auth_user(
+    return await get_user_from_token(
         session=session, token=token, expected_token_type=ACCESS_TOKEN_TYPE
     )
 
 
-async def get_auth_user_for_refresh_token(
+async def get_user_from_refresh_token(
     session: SessionDep,
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str, Depends(get_token_from_header)],
 ) -> UserS:
-    return await get_auth_user(
+    return await get_user_from_token(
         session=session, token=token, expected_token_type=REFRESH_TOKEN_TYPE
     )

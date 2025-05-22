@@ -7,8 +7,8 @@ from fastapi.security import HTTPBearer, OAuth2PasswordRequestForm
 
 from app.auth.dependencies import (
     authenticate_user,
-    get_auth_user_for_access_token,
-    get_auth_user_for_refresh_token,
+    get_user_from_access_token,
+    get_user_from_refresh_token,
 )
 from app.auth.token import (
     create_access_token,
@@ -50,7 +50,7 @@ async def token(
     response_model_exclude_none=True,
 )
 async def refresh(
-    user: Annotated[UserS, Depends(get_auth_user_for_refresh_token)],
+    user: Annotated[UserS, Depends(get_user_from_refresh_token)],
 ) -> Any:
     access_token = create_access_token(user=user)
     return {
@@ -61,6 +61,6 @@ async def refresh(
 
 @router.get("/me", response_model=UserS)
 async def get_me(
-    user: Annotated[UserS, Depends(get_auth_user_for_access_token)],
+    user: Annotated[UserS, Depends(get_user_from_access_token)],
 ) -> Any:
     return user
