@@ -18,7 +18,7 @@ from app.repository import UserRepository
 from app.utils.constants import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
 from app.utils.types import TokenType
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/login")
 
 
 async def authenticate_user(

@@ -27,10 +27,10 @@ router = APIRouter(prefix="/auth", tags=["Auth"], dependencies=[Depends(http_bea
 
 
 @router.post(
-    "/token",
+    "/login",
     response_model=TokenResponseS,
 )
-async def token(
+async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep,
 ) -> Any:
