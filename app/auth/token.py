@@ -29,7 +29,9 @@ def encode_token(
     algorithm: str | None = ALGORITHM,
 ) -> str:
     try:
-        token = jwt.encode(payload=payload.model_dump(), key=key, algorithm=algorithm)
+        token = jwt.encode(
+            payload=payload.model_dump(exclude_none=True), key=key, algorithm=algorithm
+        )
     except jwt.PyJWTError as e:
         raise unverified_credentials_exc from e
     return token
