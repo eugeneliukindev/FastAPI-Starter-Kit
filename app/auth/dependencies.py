@@ -44,7 +44,7 @@ async def get_auth_user(
     return UserS.model_validate(user, from_attributes=True)
 
 
-async def get_auth_user_from_access_token(
+async def get_auth_user_for_access_token(
     session: SessionDep,
     token: Annotated[str, Depends(oauth2_scheme)],
 ) -> UserS:
@@ -53,7 +53,7 @@ async def get_auth_user_from_access_token(
     )
 
 
-async def get_auth_user_from_refresh_token(
+async def get_auth_user_for_refresh_token(
     session: SessionDep,
     token: Annotated[str, Depends(oauth2_scheme)],
 ) -> UserS:
