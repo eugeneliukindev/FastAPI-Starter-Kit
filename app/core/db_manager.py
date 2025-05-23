@@ -3,14 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 
 from fastapi import Depends
-from sqlalchemy import URL
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.config import settings
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
+    from sqlalchemy import URL
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 
