@@ -57,12 +57,12 @@ async def refresh(
 
 @router.post("/register")
 async def register(user_create_s: UserCreateS, session: SessionDep) -> TokenReadS:
-    existing_user = await UserRepository.check_already_exists(
+    user_exists_flag = await UserRepository.check_already_exists(
         session=session,
         username=user_create_s.username,
         email=str(user_create_s.email),
     )
-    if existing_user:
+    if user_exists_flag:
         raise already_exists_user_exc
     hashed_password = get_password_hash(password=user_create_s.password)
     user_create_db_s = UserCreateDbS(
