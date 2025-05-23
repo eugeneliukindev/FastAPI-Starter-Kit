@@ -26,3 +26,9 @@ expired_token_exc = HTTPException(
     detail="Token has expired",
     headers={"WWW-Authenticate": "Bearer"},
 )
+
+already_exists_user_exc = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="User with this username or email already exists",
+    headers={"WWW-Authenticate": "Bearer"},
+)
