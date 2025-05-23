@@ -6,8 +6,8 @@ import jwt
 from pydantic_core import ValidationError
 
 from app.config import settings
-from app.core.schemas import UserS
 from app.core.schemas.token import TokenPayloadS
+from app.core.schemas.user import UserReadS
 from app.exceptions.auth import (
     expired_token_exc,
     invalid_token_type_exc,
@@ -29,15 +29,13 @@ def encode_token(
     algorithm: str | None = ALGORITHM,
 ) -> str:
     try:
-        token = jwt.encode(
-            payload=payload.model_dump(exclude_none=True), key=key, algorithm=algorithm
-        )
+        token = jwt.encode(payload=payload.model_dump(exclude_none=True), key=key, algorithm=algorithm)
     except jwt.PyJWTError as e:
         raise unverified_credentials_exc from e
     return token
 
 
-def decode_and_validate_token(
+def decode_token(
     token: str,
     expected_token_type: TokenType,
     key: Any = settings.jwt.public_key.read_text(),
@@ -71,12 +69,12 @@ def decode_and_validate_token(
 
 def create_token(
     type_: TokenType,
-    user: UserS,
+    user_read_s: UserReadS,
     expires_delta: timedelta,
 ) -> str:
     now = int(datetime.now(UTC).timestamp())
     exp = now + int(expires_delta.total_seconds())
-    sub = user.username
+    sub = user_read_s.username
     jti = uuid.uuid4().hex
     if type_ == ACCESS_TOKEN_TYPE:
         payload = TokenPayloadS(
@@ -85,9 +83,9 @@ def create_token(
             iat=now,
             exp=exp,
             jti=jti,
-            id=user.id,
-            username=user.username,
-            email=user.email,
+            id=user_read_s.id,
+            username=user_read_s.username,
+            email=user_read_s.email,
         )
     else:
         payload = TokenPayloadS(
@@ -101,21 +99,21 @@ def create_token(
 
 
 def create_access_token(
-    user: UserS,
+    user_read_s: UserReadS,
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
 ) -> str:
     return create_token(
         type_=ACCESS_TOKEN_TYPE,
-        user=user,
+        user_read_s=user_read_s,
         expires_delta=expires_delta,
     )
 
 
 def create_refresh_token(
-    user: UserS, expires_delta: timedelta = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    user_read_s: UserReadS, expires_delta: timedelta = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 ) -> str:
     return create_token(
         type_=REFRESH_TOKEN_TYPE,
-        user=user,
+        user_read_s=user_read_s,
         expires_delta=expires_delta,
     )
