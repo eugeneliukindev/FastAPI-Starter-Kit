@@ -3,42 +3,37 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel
-
 from app.core.models import Base
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from typing import Any
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class AbstractService[
-    CS: BaseModel,  # Create schema
-    US: BaseModel,  # Update schema
-    M: Base,  # Model
-](ABC):
-    @staticmethod
+class AbstractRepository[M: Base](ABC):
+    @classmethod
     @abstractmethod
-    async def create(session: AsyncSession, schema: CS) -> M | None:
+    async def create(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M:
         raise NotImplementedError()
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    async def get(session: AsyncSession, id_: int) -> M | None:
+    async def get(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
         raise NotImplementedError()
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    async def get_all(session: AsyncSession) -> Sequence[M]:
+    async def get_all(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> Sequence[M]:
         raise NotImplementedError()
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    async def update(session: AsyncSession, id_: int, schema: US) -> M | None:
+    async def update(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
         raise NotImplementedError()
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    async def delete(session: AsyncSession, id_: int) -> Base | None:
+    async def delete(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
         raise NotImplementedError()

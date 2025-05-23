@@ -2,65 +2,84 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, or_, select, update
 
 from app.core.models import UserOrm
-from app.core.schemas import UserPatchS, UserPutS
-from app.core.schemas.user import UserCreateDatabaseS
-from app.repository.abstract import AbstractService
+from app.core.schemas import UserPutS
+from app.repository.abstract import AbstractRepository
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from typing import Any
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
+    from app.core.schemas import UserCreateDbS, UserPatchS
 
-class UserRepository(
-    AbstractService[
-        UserCreateDatabaseS,  # Create schema
-        UserPatchS | UserPutS,  # Update schema
-        UserOrm,  # Model
-    ]
-):
-    @staticmethod
+
+class UserRepository(AbstractRepository[UserOrm]):
+    @classmethod
     async def create(
+        cls,
         session: AsyncSession,
-        user_create_db: UserCreateDatabaseS,
-    ) -> UserOrm | None:
-        query = select(UserOrm).where(UserOrm.email == user_create_db.email)
-        existing_user = (await session.scalars(query)).first()
-        if existing_user:
-            return None
-        user = UserOrm(**user_create_db.model_dump())
-        session.add(user)
+        user_create_db_s: UserCreateDbS,
+    ) -> UserOrm:
+        user_orm = UserOrm(**user_create_db_s.model_dump())
+        session.add(user_orm)
         await session.commit()
+        await session.refresh(user_orm)
+        return user_orm
+
+    @classmethod
+    async def get(cls, session: AsyncSession, user_id: int) -> UserOrm | None:
+        user = await session.get(UserOrm, user_id)
         return user
 
-    @staticmethod
-    async def get(
+    @classmethod
+    async def get_by_filters(
+        cls,
         session: AsyncSession,
-        user_id: int,
+        **filters: Any,
     ) -> UserOrm | None:
-        return await session.get(UserOrm, user_id)
+        query = select(UserOrm).filter_by(**filters)
+        user = (await session.scalars(query)).first()
+        return user
 
-    @staticmethod
-    async def get_by_username(
+    # @classmethod
+    # async def get_by_conditions(
+    #     cls,
+    #     session: AsyncSession,
+    #     to_schema: type[S] | None = None,
+    #     *conditions: Any,  # e.g. [UserOrm.username == "Aleksey", User.email == "test@example.com"]
+    # ):
+    #     query = select(UserOrm).where(*conditions)
+    #     user_orm = (await session.scalars(query)).first()
+    #     return cls._to_schema_or_orm(orm_obj=user_orm, to_schema=to_schema)
+    #
+
+    @classmethod
+    async def check_already_exists(
+        cls,
         session: AsyncSession,
         username: str,
-    ) -> UserOrm | None:
-        query = select(UserOrm).where(UserOrm.username == username)
-        return (await session.scalars(query)).first()
+        email: str,
+    ) -> bool:
+        query = select(UserOrm).where(or_(UserOrm.username == username, UserOrm.email == email))
+        user_orm = (await session.scalars(query)).first()
+        return True if user_orm else False
 
-    @staticmethod
+    @classmethod
     async def get_all(
+        cls,
         session: AsyncSession,
     ) -> Sequence[UserOrm]:
-        stmt = select(UserOrm).order_by(UserOrm.id)
-        result = await session.scalars(stmt)
-        return result.all()
+        query = select(UserOrm).order_by(UserOrm.id)
+        users = (await session.scalars(query)).all()
+        return users
 
-    @staticmethod
+    @classmethod
     async def update(
+        cls,
         session: AsyncSession,
         user_id: int,
         user_update: UserPutS | UserPatchS,
@@ -70,12 +89,7 @@ class UserRepository(
             if isinstance(user_update, UserPutS)
             else user_update.model_dump(exclude_unset=True, exclude_none=True)
         )
-        stmt = (
-            update(UserOrm)
-            .where(UserOrm.id == user_id)
-            .values(**values)
-            .returning(UserOrm)
-        )
+        stmt = update(UserOrm).where(UserOrm.id == user_id).values(**values).returning(UserOrm)
 
         updated_user = (await session.scalars(stmt)).first()
 
@@ -85,8 +99,9 @@ class UserRepository(
         await session.commit()
         return updated_user
 
-    @staticmethod
+    @classmethod
     async def delete(
+        cls,
         session: AsyncSession,
         user_id: int,
     ) -> UserOrm | None:
