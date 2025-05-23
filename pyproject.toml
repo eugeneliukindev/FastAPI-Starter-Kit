@@ -24,6 +24,9 @@ types-passlib = "^1.7.7.20250516"
 strict = true
 plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 
+[tool.ruff]
+line-length = 120
+
 [tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
