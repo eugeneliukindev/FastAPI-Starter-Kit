@@ -23,38 +23,24 @@ class BaseRepository[M: Base, CreateS: BaseModel, UpdateS: BaseModel](AbstractRe
     @classmethod
     @overload
     async def _execute_query(
-        cls,
-        session: AsyncSession,
-        result_method: Literal["first"],
-        **filter_by: Any,
+        cls, session: AsyncSession, result_method: Literal["first"], **filter_by: Any
     ) -> M | None: ...
 
     @classmethod
     @overload
     async def _execute_query(
-        cls,
-        session: AsyncSession,
-        result_method: Literal["all"],
-        **filter_by: Any,
+        cls, session: AsyncSession, result_method: Literal["all"], **filter_by: Any
     ) -> Sequence[M]: ...
 
     @classmethod
     @overload
     async def _execute_query(
-        cls,
-        session: AsyncSession,
-        result_method: Literal["one_or_none"],
-        **filter_by: Any,
+        cls, session: AsyncSession, result_method: Literal["one_or_none"], **filter_by: Any
     ) -> M | None: ...
 
     @classmethod
     @overload
-    async def _execute_query(
-        cls,
-        session: AsyncSession,
-        result_method: Literal["one"],
-        **filter_by: Any,
-    ) -> M: ...
+    async def _execute_query(cls, session: AsyncSession, result_method: Literal["one"], **filter_by: Any) -> M: ...
 
     @classmethod
     async def _execute_query(
