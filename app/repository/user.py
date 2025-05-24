@@ -5,12 +5,11 @@ from typing import TYPE_CHECKING
 from sqlalchemy import or_, select
 
 from app.core.models import UserOrm
+from app.core.schemas import UserCreateDbS, UserPatchS, UserPutS
 from app.repository.base import BaseRepository
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
-
-    from app.core.schemas import UserCreateDbS, UserPatchS, UserPutS
 
 
 class UserRepository(BaseRepository[UserOrm, UserCreateDbS, UserPatchS | UserPutS]):
