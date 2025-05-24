@@ -38,8 +38,8 @@ async def get_user_from_token(
     expected_token_type: TokenType,
 ) -> UserReadS:
     payload = decode_token(token=token, expected_token_type=expected_token_type)
-    username = payload.sub
-    user = await UserRepository.get_by_filters(session=session, username=username)
+    user_id = int(payload.sub)
+    user = await UserRepository.get(session=session, user_id=user_id)
     if user is None:
         raise invalid_token_type_exc
     return UserReadS.model_validate(user)

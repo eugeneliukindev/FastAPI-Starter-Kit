@@ -61,8 +61,6 @@ def decode_token(
         raise unverified_credentials_exc from e
     except ValidationError as e:
         raise unverified_credentials_exc from e
-    except Exception as e:
-        raise unverified_credentials_exc from e
 
     return payload
 
@@ -72,29 +70,16 @@ def create_token(
     user_read_s: UserReadS,
     expires_delta: timedelta,
 ) -> str:
-    now = int(datetime.now(UTC).timestamp())
-    exp = now + int(expires_delta.total_seconds())
-    sub = user_read_s.username
+    iat = int(datetime.now(UTC).timestamp())
+    exp = iat + int(expires_delta.total_seconds())
     jti = uuid.uuid4().hex
-    if token_type == ACCESS_TOKEN_TYPE:
-        payload = TokenPayloadS(
-            type=ACCESS_TOKEN_TYPE,
-            sub=sub,
-            iat=now,
-            exp=exp,
-            jti=jti,
-            id=user_read_s.id,
-            username=user_read_s.username,
-            email=user_read_s.email,
-        )
-    else:
-        payload = TokenPayloadS(
-            type=REFRESH_TOKEN_TYPE,
-            sub=sub,
-            iat=now,
-            exp=exp,
-            jti=jti,
-        )
+    payload = TokenPayloadS(
+        type=ACCESS_TOKEN_TYPE if token_type == ACCESS_TOKEN_TYPE else REFRESH_TOKEN_TYPE,
+        sub=user_read_s.id,
+        iat=iat,
+        exp=exp,
+        jti=jti,
+    )
     return encode_token(payload=payload)
 
 

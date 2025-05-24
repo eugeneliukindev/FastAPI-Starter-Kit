@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict
 
 from app.utils.constants import AUTHENTICATION_SCHEME_TYPE
 from app.utils.types import AuthenticationSchemeType, TokenType
@@ -11,13 +11,10 @@ class TokenReadS(BaseModel):
 
 
 class TokenPayloadS(BaseModel):
-    # required keys
+    model_config = ConfigDict(coerce_numbers_to_str=True)
+
     type: TokenType
-    sub: str
+    sub: str  # id
     iat: int
     exp: int
     jti: str
-    # for access token
-    id: int | None = None
-    username: str | None = None
-    email: EmailStr | None = None
