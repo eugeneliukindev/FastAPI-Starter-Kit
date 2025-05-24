@@ -10,8 +10,8 @@ from fastapi import (
 from app.auth.dependencies import get_user_from_access_token
 from app.auth.password import get_password_hash
 from app.core.db_manager import SessionDep
-from app.core.schemas import UserCreateS, UserPutS
-from app.core.schemas.user import UserCreateDbS, UserPatchS, UserReadS
+from app.core.schemas import UserCreateS
+from app.core.schemas.user import UserCreateDbS, UserPatchS, UserPutS, UserReadS
 from app.exceptions.users import user_not_found_exp
 from app.repository import UserRepository
 
@@ -64,7 +64,7 @@ async def get_user(
 
 
 @router.put("/{user_id}", response_model=UserReadS)
-async def update_user_partial(
+async def update_user(
     session: SessionDep,
     user_id: int,
     user_put: UserPutS,
@@ -76,7 +76,7 @@ async def update_user_partial(
 
 
 @router.patch("/{user_id}", response_model=UserReadS)
-async def update_user(
+async def update_user_partial(
     session: SessionDep,
     user_id: int,
     user_patch: UserPatchS,
