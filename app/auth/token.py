@@ -68,7 +68,7 @@ def decode_token(
 
 
 def create_token(
-    type_: TokenType,
+    token_type: TokenType,
     user_read_s: UserReadS,
     expires_delta: timedelta,
 ) -> str:
@@ -76,7 +76,7 @@ def create_token(
     exp = now + int(expires_delta.total_seconds())
     sub = user_read_s.username
     jti = uuid.uuid4().hex
-    if type_ == ACCESS_TOKEN_TYPE:
+    if token_type == ACCESS_TOKEN_TYPE:
         payload = TokenPayloadS(
             type=ACCESS_TOKEN_TYPE,
             sub=sub,
@@ -103,7 +103,7 @@ def create_access_token(
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
 ) -> str:
     return create_token(
-        type_=ACCESS_TOKEN_TYPE,
+        token_type=ACCESS_TOKEN_TYPE,
         user_read_s=user_read_s,
         expires_delta=expires_delta,
     )
@@ -113,7 +113,7 @@ def create_refresh_token(
     user_read_s: UserReadS, expires_delta: timedelta = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 ) -> str:
     return create_token(
-        type_=REFRESH_TOKEN_TYPE,
+        token_type=REFRESH_TOKEN_TYPE,
         user_read_s=user_read_s,
         expires_delta=expires_delta,
     )
