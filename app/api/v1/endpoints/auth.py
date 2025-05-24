@@ -34,9 +34,9 @@ async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep,
 ) -> TokenReadS:
-    user = await authenticate_user(session, form_data.username, form_data.password)
-    access_token = create_access_token(user_read_s=user)
-    refresh_token = create_refresh_token(user_read_s=user)
+    user_read_s = await authenticate_user(session, form_data.username, form_data.password)
+    access_token = create_access_token(user_read_s=user_read_s)
+    refresh_token = create_refresh_token(user_read_s=user_read_s)
     return TokenReadS(
         access_token=access_token,
         refresh_token=refresh_token,
