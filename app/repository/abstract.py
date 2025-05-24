@@ -20,12 +20,22 @@ class AbstractRepository[M: Base](ABC):
 
     @classmethod
     @abstractmethod
-    async def get(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
+    async def find_first(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
         raise NotImplementedError()
 
     @classmethod
     @abstractmethod
-    async def get_all(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> Sequence[M]:
+    async def find_one_or_none(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M | None:
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    async def find_all(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> Sequence[M]:
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    async def find_one(cls, session: AsyncSession, *args: Any, **kwargs: Any) -> M:
         raise NotImplementedError()
 
     @classmethod

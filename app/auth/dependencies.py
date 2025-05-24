@@ -22,7 +22,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/login")
 
 
 async def authenticate_user(session: AsyncSession, username: str, password: str) -> UserReadS:
-    user = await UserRepository.get_by_filters(session=session, username=username)
+    user = await UserRepository.find_one_or_none(session=session, username=username)
     if user is None or not verify_password(password, user.hashed_password):
         raise incorrect_username_or_password_exp
     return UserReadS.model_validate(user)
@@ -39,7 +39,7 @@ async def get_user_from_token(
 ) -> UserReadS:
     payload = decode_token(token=token, expected_token_type=expected_token_type)
     user_id = int(payload.sub)
-    user = await UserRepository.get(session=session, user_id=user_id)
+    user = await UserRepository.find_one_or_none(session=session, id=user_id)
     if user is None:
         raise invalid_token_type_exc
     return UserReadS.model_validate(user)

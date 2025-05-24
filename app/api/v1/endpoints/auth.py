@@ -67,9 +67,9 @@ async def register(user_create_s: UserCreateS, session: SessionDep) -> TokenRead
     user_create_db_s = UserCreateDbS(
         username=user_create_s.username,
         hashed_password=hashed_password,
-        email=user_create_s.email,
+        email=str(user_create_s.email),
     )
-    user = await UserRepository.create(session=session, user_create_db_s=user_create_db_s)
+    user = await UserRepository.create(session=session, schema=user_create_db_s)
     user_read_s = UserReadS.model_validate(user)
     access_token = create_access_token(user_read_s=user_read_s)
     refresh_token = create_refresh_token(user_read_s=user_read_s)

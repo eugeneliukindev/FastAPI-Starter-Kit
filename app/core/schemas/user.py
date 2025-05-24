@@ -17,7 +17,7 @@ class UserCreateS(UserBaseS):
 class UserCreateDbS(UserBaseS):
     username: str
     hashed_password: str
-    email: EmailStr
+    email: str
 
 
 @final

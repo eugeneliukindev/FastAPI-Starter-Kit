@@ -25,7 +25,7 @@ router = APIRouter(tags=["Users"], prefix="/users")
 async def get_all_users(
     session: SessionDep,
 ) -> Any:
-    users = await UserRepository.get_all(session=session)
+    users = await UserRepository.find_all(session=session)
     return users
 
 
@@ -38,11 +38,11 @@ async def create_user(
     user_create_db_s = UserCreateDbS(
         username=user_create.username,
         hashed_password=hashed_password,
-        email=user_create.email,
+        email=str(user_create.email),
     )
     user = await UserRepository.create(
         session=session,
-        user_create_db_s=user_create_db_s,
+        schema=user_create_db_s,
     )
     return user
 
@@ -57,7 +57,7 @@ async def get_user(
     user_id: int,
     session: SessionDep,
 ) -> Any:
-    user = await UserRepository.get(session=session, user_id=user_id)
+    user = await UserRepository.find_one_or_none(session=session, id=user_id)
     if user is None:
         raise user_not_found_exp
     return user
@@ -69,7 +69,7 @@ async def update_user_partial(
     user_id: int,
     user_put: UserPutS,
 ) -> Any:
-    updated_user = await UserRepository.update(session=session, user_id=user_id, user_update=user_put)
+    updated_user = await UserRepository.update(session=session, id_=user_id, schema=user_put)
     if updated_user is None:
         raise user_not_found_exp
     return updated_user
@@ -81,7 +81,7 @@ async def update_user(
     user_id: int,
     user_patch: UserPatchS,
 ) -> Any:
-    updated_user = await UserRepository.update(session=session, user_id=user_id, user_update=user_patch)
+    updated_user = await UserRepository.update(session=session, id_=user_id, schema=user_patch)
     if updated_user is None:
         raise user_not_found_exp
     return updated_user
@@ -92,7 +92,7 @@ async def delete_user(
     session: SessionDep,
     user_id: int,
 ) -> Any:
-    deleted_user = await UserRepository.delete(session=session, user_id=user_id)
+    deleted_user = await UserRepository.delete(session=session, id_=user_id)
     if deleted_user is None:
         raise user_not_found_exp
     return deleted_user
