@@ -1,20 +1,63 @@
 services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    profiles: [ "default" ]
+    container_name: app_container
+    environment:
+      APP_CONFIG__DB__NAME: ${APP_CONFIG__DB__NAME}
+      APP_CONFIG__DB__PASSWORD: ${APP_CONFIG__DB__PASSWORD}
+      APP_CONFIG__DB__USER: ${APP_CONFIG__DB__USER}
+      APP_CONFIG__DB__HOST: pg
+      APP_CONFIG__DB__PORT: ${APP_CONFIG__DB__PORT}
+      APP_CONFIG__DB__DRIVER: ${APP_CONFIG__DB__DRIVER}
+
+      APP_CONFIG__DB__ECHO: ${APP_CONFIG__DB__ECHO}
+      APP_CONFIG__DB__ECHO_POOL: ${APP_CONFIG__DB__ECHO_POOL}
+      APP_CONFIG__DB__POOL_SIZE: ${APP_CONFIG__DB__POOL_SIZE}
+      APP_CONFIG__DB__MAX_OVERFLOW: ${APP_CONFIG__DB__MAX_OVERFLOW}
+
+      APP_CONFIG__LOGGING__LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_healthy
+
   pg:
     image: postgres:16
+    profiles: [ "default" ]
+    container_name: pg_container
     environment:
       POSTGRES_DB: ${APP_CONFIG__DB__NAME}
       POSTGRES_USER: ${APP_CONFIG__DB__USER}
       POSTGRES_PASSWORD: ${APP_CONFIG__DB__PASSWORD}
-      PGDATA: /var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - ${APP_CONFIG__DB__PORT}:5432
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 5s
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
+  pg_test:
+    image: postgres:16
+    profiles: [ "test" ]
+    container_name: pg_test_container
+    environment:
+      POSTGRES_DB: ${APP_TEST_CONFIG__DB__NAME}
+      POSTGRES_USER: ${APP_TEST_CONFIG__DB__USER}
+      POSTGRES_PASSWORD: ${APP_TEST_CONFIG__DB__PASSWORD}
+    ports:
+      - ${APP_TEST_CONFIG__DB__PORT}:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 3s
       timeout: 3s
       retries: 3
 
 volumes:
-  pgdata:
+  pg_data:
