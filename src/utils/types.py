@@ -7,3 +7,9 @@ class LogLevelEnum(StrEnum):
     WARNING = "WARNING"
     ERROR = "ERROR"
     CRITICAL = "CRITICAL"
+
+
+class ModeEnum(StrEnum):
+    DEV = "DEV"
+    TEST = "TEST"
+    PROD = "PROD"
