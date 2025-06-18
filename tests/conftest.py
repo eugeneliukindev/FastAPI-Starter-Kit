@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
@@ -24,8 +23,6 @@ SKIP_MESSAGE_PATTERN = 'Need "--{db}" option with {db} URI to run'
 INVALID_URI_PATTERN = "Invalid {db} URI {uri!r}: {err}"
 
 BASE_DIR: Final[Path] = Path(__file__).resolve().parent.parent
-
-os.environ["MODE"] = ModeEnum.TEST
 
 
 @pytest.fixture(scope="session")
