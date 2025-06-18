@@ -4,12 +4,12 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "^0.115.12"
-uvicorn = {extras = ["standard"], version = "^0.34.2"}
+uvicorn = { extras = ["standard"], version = "^0.34.2" }
 pydantic-settings = "^2.9.1"
 alembic = "^1.15.2"
-sqlalchemy = {extras = ["asyncio", "mypy"], version = "^2.0.41"}
+sqlalchemy = { extras = ["asyncio", "mypy"], version = "^2.0.41" }
 asyncpg = "^0.30.0"
-pydantic = {extras = ["email"], version = "^2.11.4"}
+pydantic = { extras = ["email"], version = "^2.11.4" }
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
@@ -30,20 +30,24 @@ line-length = 120
 
 [tool.ruff.lint]
 select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "B",  # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
 ]
 ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
-    "W191",  # indentation contains tabs
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "W191", # indentation contains tabs
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "fastapi-app/alembic/versions/*.py" = ["W291"] # ignore trailing-whitespace in alembic autogenerate migrations
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
