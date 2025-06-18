@@ -15,30 +15,14 @@ if TYPE_CHECKING:
 
 
 class DatabaseManager:
-    def __init__(
-        self,
-        url: URL,
-        echo: bool = False,
-        echo_pool: bool = False,
-        pool_size: int = 5,
-        max_overflow: int = 10,
-    ):
-        self.engine: AsyncEngine = create_async_engine(
-            url=url,
-            echo=echo,
-            echo_pool=echo_pool,
-            pool_size=pool_size,
-            max_overflow=max_overflow,
-        )
+    def __init__(self, url: URL, **engine_params):
+        self.engine: AsyncEngine = create_async_engine(url=url, **engine_params)
         self.session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
             bind=self.engine,
             autocommit=False,
             autoflush=False,
             expire_on_commit=False,
         )
-
-    async def dispose(self) -> None:
-        await self.engine.dispose()
 
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
