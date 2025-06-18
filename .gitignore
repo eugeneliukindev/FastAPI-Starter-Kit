@@ -205,7 +205,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# fastapi-app/.env
+.env
 .venv
 env/
 venv/
