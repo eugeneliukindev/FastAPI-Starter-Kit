@@ -16,18 +16,12 @@ if TYPE_CHECKING:
 
 @asynccontextmanager
 async def lifespan(app_: FastAPI) -> AsyncGenerator[None, None]:
-    # startup
     yield
-    # shutdown
     await db_manager.dispose()
 
 
-app = FastAPI(
-    lifespan=lifespan,
-)
-app.include_router(
-    api_v1_router,
-)
+app = FastAPI(lifespan=lifespan)
+app.include_router(api_v1_router)
 
 if __name__ == "__main__":
     uvicorn.run(
