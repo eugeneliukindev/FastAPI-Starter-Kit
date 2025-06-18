@@ -21,7 +21,7 @@ class RunConfig(BaseModel):
     port: int = 8000
 
 
-class _DatabaseConfig(BaseModel):
+class BaseDatabaseConfig(BaseModel):
     driver: str = "postgresql+asyncpg"
     host: str = "localhost"
     port: int = 5432
@@ -52,11 +52,7 @@ class _DatabaseConfig(BaseModel):
     }
 
 
-class TestDatabaseConfig(_DatabaseConfig):
-    pass
-
-
-class DatabaseConfig(_DatabaseConfig):
+class DatabaseConfig(BaseDatabaseConfig):
     pool_size: int = 50
     max_overflow: int = 10
 
@@ -81,10 +77,9 @@ class Settings(BaseSettings):
         env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",
     )
-    run: RunConfig
+    run: RunConfig = RunConfig()
     db: DatabaseConfig
-    db_test: TestDatabaseConfig
-    logging: LoggingConfig
+    logging: LoggingConfig = LoggingConfig()
 
 
 settings = Settings()
