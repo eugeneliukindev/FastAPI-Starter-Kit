@@ -6,11 +6,11 @@ from fastapi import (
     APIRouter,
 )
 
-from app.core.schemas import UserCreateS, UserPutS, UserS
-from app.core.schemas.user import UserPatchS
-from app.exceptions.users import raise_user_already_exists_exp, raise_user_not_found_exp
-from app.repository import UserService
-from app.utils.types import SessionDep
+from src.core.schemas import UserCreateS, UserPutS, UserS
+from src.core.schemas.user import UserPatchS
+from src.exceptions.users import raise_user_already_exists_exp, raise_user_not_found_exp
+from src.repository import UserService
+from src.utils.types import SessionDep
 
 if TYPE_CHECKING:
     from typing import Any
@@ -57,9 +57,7 @@ async def update_user_partial(
     user_id: int,
     user_put: UserPutS,
 ) -> Any:
-    updated_user = await UserService.update(
-        session=session, user_id=user_id, user_update=user_put
-    )
+    updated_user = await UserService.update(session=session, user_id=user_id, user_update=user_put)
     if updated_user is None:
         raise_user_not_found_exp()
     return updated_user

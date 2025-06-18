@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from app.config import settings
+from src.config import settings
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator

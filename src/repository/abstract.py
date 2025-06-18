@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel
 
-from app.core.models import Base
+from src.core.models import Base
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

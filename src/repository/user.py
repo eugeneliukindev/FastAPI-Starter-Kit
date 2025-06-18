@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import delete, select, update
 
-from app.core.models import UserOrm
-from app.core.schemas import UserCreateS, UserPatchS, UserPutS
-from app.repository.abstract import AbstractService
+from src.core.models import UserOrm
+from src.core.schemas import UserCreateS, UserPatchS, UserPutS
+from src.repository.abstract import AbstractService
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -61,12 +61,7 @@ class UserService(
             if isinstance(user_update, UserPutS)
             else user_update.model_dump(exclude_unset=True, exclude_none=True)
         )
-        stmt = (
-            update(UserOrm)
-            .where(UserOrm.id == user_id)
-            .values(**values)
-            .returning(UserOrm)
-        )
+        stmt = update(UserOrm).where(UserOrm.id == user_id).values(**values).returning(UserOrm)
 
         updated_user = (await session.scalars(stmt)).first()
 

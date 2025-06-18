@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 import uvicorn
 from fastapi import FastAPI
 
-from app.api.v1.routes import api_v1_router
-from app.config import settings
-from app.core.db_manager import db_manager
+from src.api.v1.routes import api_v1_router
+from src.config import settings
+from src.core.db_manager import db_manager
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
