@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
 
@@ -13,11 +12,6 @@ from src.core.db_manager import db_manager
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
-
-logging.basicConfig(
-    level=settings.logging.log_level_value,
-    format=settings.logging.log_format,
-)
 
 
 @asynccontextmanager
