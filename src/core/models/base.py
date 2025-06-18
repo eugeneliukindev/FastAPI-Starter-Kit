@@ -7,7 +7,7 @@ from src.config import settings
 from src.utils.case_converter import camel_case_to_snake_case
 
 
-class Base(DeclarativeBase):
+class BaseOrm(DeclarativeBase):
     __abstract__ = True
 
     metadata = MetaData(

@@ -1,7 +1,7 @@
-from .base import Base
+from .base import BaseOrm
 from .user import UserOrm
 
 __all__ = [
     "UserOrm",
-    "Base",
+    "BaseOrm",
 ]

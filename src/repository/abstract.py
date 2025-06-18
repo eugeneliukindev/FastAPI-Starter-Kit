@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel
 
-from src.core.models import Base
+from src.core.models import BaseOrm
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class AbstractService[
     CS: BaseModel,  # Create schema
     US: BaseModel,  # Update schema
-    M: Base,  # Model
+    M: BaseOrm,  # Model
 ](ABC):
     @staticmethod
     @abstractmethod
@@ -40,5 +40,5 @@ class AbstractService[
 
     @staticmethod
     @abstractmethod
-    async def delete(session: AsyncSession, id_: int) -> Base | None:
+    async def delete(session: AsyncSession, id_: int) -> BaseOrm | None:
         raise NotImplementedError()
