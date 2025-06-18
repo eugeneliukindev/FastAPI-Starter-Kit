@@ -6,11 +6,11 @@ from fastapi import (
     APIRouter,
 )
 
+from src.core.db_manager import SessionDep
 from src.core.schemas import UserCreateS, UserPutS, UserS
 from src.core.schemas.user import UserPatchS
 from src.exceptions.users import raise_user_already_exists_exp, raise_user_not_found_exp
 from src.repository import UserService
-from src.utils.types import SessionDep
 
 if TYPE_CHECKING:
     from typing import Any

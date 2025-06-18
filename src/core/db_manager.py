@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
+from fastapi import Depends
 from sqlalchemy import URL
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config import settings
 
@@ -51,3 +52,7 @@ db_manager = DatabaseManager(
     pool_size=settings.db.pool_size,
     max_overflow=settings.db.max_overflow,
 )
+SessionDep = Annotated[
+    AsyncSession,
+    Depends(db_manager.session_getter),
+]
