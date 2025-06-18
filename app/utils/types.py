@@ -1,3 +1,4 @@
+from enum import StrEnum
 from typing import Annotated
 
 from fastapi import Depends
@@ -9,3 +10,11 @@ SessionDep = Annotated[
     AsyncSession,
     Depends(db_manager.session_getter),
 ]
+
+
+class LogLevelEnum(StrEnum):
+    DEBUG = "DEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
