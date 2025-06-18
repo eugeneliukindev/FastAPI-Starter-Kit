@@ -16,12 +16,13 @@ class TestDatabaseConfig(BaseDatabaseConfig):
 class TestSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
-            BASE_DIR / ".env.test-template",
-            BASE_DIR / ".env.test",
+            BASE_DIR / ".env-template",
+            BASE_DIR / ".env",
         ),
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="APP_TEST_CONFIG__",
+        extra="ignore",
     )
     db: TestDatabaseConfig
 
