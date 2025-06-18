@@ -1,3 +1,6 @@
+import re
+
+
 def camel_case_to_snake_case(input_str: str) -> str:
     """
     >>> camel_case_to_snake_case("SomeSDK")
@@ -6,21 +9,13 @@ def camel_case_to_snake_case(input_str: str) -> str:
     'r_servo_drive'
     >>> camel_case_to_snake_case("SDKDemo")
     'sdk_demo'
+    >>> camel_case_to_snake_case("UserORM")
+    'user'
     """
-    suffix = input_str[-3:]
-    if suffix.lower() == "orm":
-        input_str = input_str.removesuffix(suffix)
-    chars = []
-    for c_idx, char in enumerate(input_str):
-        if c_idx and char.isupper():
-            nxt_idx = c_idx + 1
-            # idea of the flag is to separate abbreviations
-            # as new words, show them in lower case
-            flag = nxt_idx >= len(input_str) or input_str[nxt_idx].isupper()
-            prev_char = input_str[c_idx - 1]
-            if prev_char.isupper() and flag:
-                pass
-            else:
-                chars.append("_")
-        chars.append(char.lower())
-    return "".join(chars)
+    if input_str.lower().endswith("orm"):
+        input_str = input_str[:-3]
+
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", input_str)
+    s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
+
+    return s2.lower()
