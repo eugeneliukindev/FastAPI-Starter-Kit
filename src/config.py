@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Any, Final
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
 )
 from sqlalchemy import URL
 
-from src.utils.types import LogLevelEnum
+from src.utils.types import LogLevelEnum, ModeEnum
 
 BASE_DIR: Final[Path] = Path(__file__).resolve().parent.parent
 
@@ -63,8 +63,12 @@ class LoggingConfig(BaseModel):
     datefmt: str = LOG_DATE_FORMAT
 
     @field_validator("level", mode="before")
-    def validate_log_level(cls, v: Any) -> LogLevelEnum | Any:
+    def validate_log_level(cls, v: Any) -> Any:
         return v.upper() if isinstance(v, str) else v
+
+
+class TestSettings(BaseSettings):
+    db: DatabaseConfig
 
 
 class Settings(BaseSettings):
@@ -75,12 +79,19 @@ class Settings(BaseSettings):
         ),
         case_sensitive=False,
         env_nested_delimiter="__",
-        env_prefix="APP_CONFIG__",
-        extra="ignore",
+        env_prefix="CONFIG__",
     )
+    mode: ModeEnum
     run: RunConfig = RunConfig()
     db: DatabaseConfig
     logging: LoggingConfig = LoggingConfig()
+    test: TestSettings | None = None
+
+    @model_validator(mode="before")
+    def validate_test_mode(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if values["mode"] == ModeEnum.TEST and values.get("test") is None:
+            raise ValueError("Field 'test' is required when mode is set to TEST. Please provide test configuration.")
+        return values
 
 
 settings = Settings()

@@ -1,38 +1,68 @@
+from __future__ import annotations
+
+import asyncio
+import os
 from pathlib import Path
+from typing import TYPE_CHECKING, Final
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import NullPool
+import pytest
+import pytest_asyncio
 
-from src.config import BaseDatabaseConfig
-from src.core.db_manager import DatabaseManager
+from src.config import settings
+from src.core.db_manager import db_manager
+from src.core.models import BaseOrm, UserOrm
+from src.utils.types import ModeEnum
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+if TYPE_CHECKING:
+    from asyncio import AbstractEventLoop
+    from collections.abc import AsyncGenerator, Generator
 
+    from _pytest.fixtures import SubRequest
+    from sqlalchemy.ext.asyncio import AsyncSession
 
-class TestDatabaseConfig(BaseDatabaseConfig):
-    pass
+SKIP_MESSAGE_PATTERN = 'Need "--{db}" option with {db} URI to run'
+INVALID_URI_PATTERN = "Invalid {db} URI {uri!r}: {err}"
 
+BASE_DIR: Final[Path] = Path(__file__).resolve().parent.parent
 
-class TestSettings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=(
-            BASE_DIR / ".env-template",
-            BASE_DIR / ".env",
-        ),
-        case_sensitive=False,
-        env_nested_delimiter="__",
-        env_prefix="APP_TEST_CONFIG__",
-        extra="ignore",
-    )
-    db: TestDatabaseConfig
+os.environ["MODE"] = ModeEnum.TEST
 
 
-test_settings = TestSettings()
+@pytest.fixture(scope="session")
+def mock_users():
+    return [
+        UserOrm(username="Andrey", email="andrey@example.com"),
+        UserOrm(username="Vova", email="vova@example.com"),
+    ]
 
 
-test_db_manager = DatabaseManager(
-    url=test_settings.db.url,
-    echo=test_settings.db.echo,
-    echo_pool=test_settings.db.echo_pool,
-    poolclass=NullPool,  # Warning! Don't delete this param!
-)
+@pytest.fixture(scope="session", autouse=True)
+def event_loop(request: SubRequest) -> Generator[AbstractEventLoop, None]:
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def prepare_db(mock_users) -> AsyncGenerator[None, None]:
+    assert settings.mode == ModeEnum.TEST
+    assert settings.db.url != settings.test.db.url
+
+    async with db_manager.engine.begin() as conn:
+        await conn.run_sync(BaseOrm.metadata.drop_all)
+        await conn.run_sync(BaseOrm.metadata.create_all)
+
+    async with db_manager.session_factory() as session:
+        for mock_user in mock_users:
+            session.add(mock_user)
+        await session.commit()
+
+    yield
+
+    await db_manager.engine.dispose()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def session() -> AsyncGenerator[AsyncSession, None]:
+    async with db_manager.session_factory() as session:
+        yield session
