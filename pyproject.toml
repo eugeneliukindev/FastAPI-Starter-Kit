@@ -25,6 +25,9 @@ httpx = "^0.28.1"
 strict = true
 plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 
+[tool.ruff]
+line-length = 120
+
 [tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
