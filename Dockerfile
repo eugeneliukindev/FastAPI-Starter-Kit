@@ -2,6 +2,7 @@ FROM python:3.12-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app \
     PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
@@ -24,9 +25,9 @@ RUN poetry lock && \
 COPY src/ src/
 COPY migrations/ migrations/
 COPY scripts/ scripts/
-COPY main.py alembic.ini ./
+COPY src/main.py alembic.ini ./
 
-RUN chmod +x scripts/prestart-migrations.sh scripts/startup.sh
+RUN chmod +x scripts/prestart-migrations.sh scripts/startup-gunicorn
 
 ENTRYPOINT ["scripts/prestart-migrations.sh"]
-CMD ["scripts/startup.sh"]
+CMD ["scripts/startup-gunicorn"]

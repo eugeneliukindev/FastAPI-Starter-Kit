@@ -16,9 +16,16 @@ LOG_DEFAULT_FORMAT: Final[str] = "[%(asctime)s.%(msecs)03d] %(module)10s:%(linen
 LOG_DATE_FORMAT: Final[str] = "%Y-%m-%d %H:%M:%S"
 
 
-class RunConfig(BaseModel):
-    host: str = "localhost"
+class UvicornConfig(BaseModel):
+    host: str = "0.0.0.0"
     port: int = 8000
+
+
+class GunicornConfig(BaseModel):
+    host: str = "0.0.0.0"
+    port: int = 8000
+    workers: int = 1
+    timeout: int = 900
 
 
 class BaseDatabaseConfig(BaseModel):
@@ -82,7 +89,8 @@ class Settings(BaseSettings):
         env_prefix="CONFIG__",
     )
     mode: ModeEnum
-    run: RunConfig = RunConfig()
+    uvicorn: UvicornConfig = UvicornConfig()
+    gunicorn: GunicornConfig = GunicornConfig()
     db: DatabaseConfig
     logging: LoggingConfig = LoggingConfig()
     test: TestSettings | None = None
