@@ -1,7 +1,7 @@
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
-from main import app as fastapi_app
+from src.main import app as fastapi_app
 
 
 @pytest_asyncio.fixture(scope="function")

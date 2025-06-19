@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, Self
 
 from pydantic import BaseModel, field_validator, model_validator
 from pydantic_settings import (
@@ -75,7 +75,7 @@ class LoggingConfig(BaseModel):
 
 
 class TestSettings(BaseSettings):
-    db: DatabaseConfig
+    db: BaseDatabaseConfig
 
 
 class Settings(BaseSettings):
@@ -87,19 +87,21 @@ class Settings(BaseSettings):
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="CONFIG__",
+        extra="ignore",
     )
     mode: ModeEnum
     uvicorn: UvicornConfig = UvicornConfig()
     gunicorn: GunicornConfig = GunicornConfig()
     db: DatabaseConfig
     logging: LoggingConfig = LoggingConfig()
+
     test: TestSettings | None = None
 
-    @model_validator(mode="before")
-    def validate_test_mode(cls, values: dict[str, Any]) -> dict[str, Any]:
-        if values["mode"] == ModeEnum.TEST and values.get("test") is None:
-            raise ValueError("Field 'test' is required when mode is set to TEST. Please provide test configuration.")
-        return values
+    @model_validator(mode="after")
+    def model_validate(self) -> Self:
+        if self.mode == ModeEnum.TEST and self.test is None:
+            raise ValueError()
+        return self
 
 
 settings = Settings()

@@ -7,21 +7,26 @@ services:
     container_name: app_container
     environment:
       CONFIG__MODE: PROD
-      CONFIG__DB__NAME: ${CONFIG__DB__NAME}
-      CONFIG__DB__PASSWORD: ${CONFIG__DB__PASSWORD}
-      CONFIG__DB__USER: ${CONFIG__DB__USER}
+      CONFIG__DB__NAME: ${PROD_DB_NAME}
+      CONFIG__DB__PASSWORD: ${PROD_DB_PASSWORD}
+      CONFIG__DB__USER: ${PROD_DB_USER}
       CONFIG__DB__HOST: pg
-      CONFIG__DB__PORT: ${CONFIG__DB__PORT}
-      CONFIG__DB__DRIVER: ${CONFIG__DB__DRIVER}
+      CONFIG__DB__PORT: ${PROD_DB_PORT}
+      CONFIG__DB__DRIVER: ${PROD_DB_DRIVER}
 
-      CONFIG__DB__ECHO: ${CONFIG__DB__ECHO}
-      CONFIG__DB__ECHO_POOL: ${CONFIG__DB__ECHO_POOL}
-      CONFIG__DB__POOL_SIZE: ${CONFIG__DB__POOL_SIZE}
-      CONFIG__DB__MAX_OVERFLOW: ${CONFIG__DB__MAX_OVERFLOW}
+      CONFIG__DB__ECHO: ${PROD_DB_ECHO}
+      CONFIG__DB__ECHO_POOL: ${PROD_DB_ECHO_POOL}
+      CONFIG__DB__POOL_SIZE: ${PROD_DB_POOL_SIZE}
+      CONFIG__DB__MAX_OVERFLOW: ${PROD_DB_MAX_OVERFLOW}
+
+      CONFIG__GUNICORN__HOST: ${CONFIG__GUNICORN__HOST}
+      CONFIG__GUNICORN__PORT: ${CONFIG__GUNICORN__PORT}
+      CONFIG__GUNICORN__WORKERS: ${CONFIG__GUNICORN__WORKERS}
+      CONFIG__GUNICORN__TIMEOUT: ${CONFIG__GUNICORN__TIMEOUT}
 
       CONFIG__LOGGING__LEVEL: INFO
     ports:
-      - "8000:8000"
+      - "${CONFIG__GUNICORN__PORT}:8000"
     depends_on:
       pg:
         condition: service_healthy
@@ -31,11 +36,11 @@ services:
     profiles: [ "prod" ]
     container_name: pg_container
     environment:
-      POSTGRES_DB: ${CONFIG__DB__NAME}
-      POSTGRES_USER: ${CONFIG__DB__USER}
-      POSTGRES_PASSWORD: ${CONFIG__DB__PASSWORD}
+      POSTGRES_DB: ${PROD_DB_NAME}
+      POSTGRES_USER: ${PROD_DB_USER}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
     ports:
-      - ${CONFIG__DB__PORT}:5432
+      - ${PROD_DB_PORT}:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
