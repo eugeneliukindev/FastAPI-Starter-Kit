@@ -10,6 +10,7 @@ alembic = "^1.15.2"
 sqlalchemy = { extras = ["asyncio", "mypy"], version = "^2.0.41" }
 asyncpg = "^0.30.0"
 pydantic = { extras = ["email"], version = "^2.11.4" }
+gunicorn = "^23.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
