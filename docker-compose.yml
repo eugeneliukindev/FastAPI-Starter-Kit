@@ -26,7 +26,7 @@ services:
 
       CONFIG__LOGGING__LEVEL: INFO
     ports:
-      - "${CONFIG__GUNICORN__PORT}:8000"
+      - "${CONFIG__GUNICORN__PORT}:${CONFIG__GUNICORN__PORT}"
     depends_on:
       pg:
         condition: service_healthy
